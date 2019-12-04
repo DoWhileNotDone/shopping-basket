@@ -1,0 +1,12 @@
+.DS_Store
+.env
+.vagrant/
+TODO
+node_modules
+var/cache
+!var/logs
+var/logs/*
+!var/logs/.keep
+var/tests
+vendor/
+.idea/

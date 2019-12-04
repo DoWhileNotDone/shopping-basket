@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<project name="Shopping Basket Service Project" default="info">
+  <property file=".env" />
+  <target name="info">
+    <echo>This is the ant build file for the project - please select the target you need.</echo>
+    <echo>The default is to output this message. Run ant -projecthelp to see other targets</echo>
+  </target>
+  <target name="development" depends="composer-install,dev-database,dummy-data" />
+  <target name="composer-install">
+    <fail message="File .env is missing">
+      <condition>
+        <not>
+          <available file=".env" />
+        </not>
+      </condition>
+    </fail>
+    <!--
+       NOTE: The Prefer Source will slow things up, it is to retrieve the latest versions
+       If it is too slow, or not required otherwise, it can be removed
+     -->
+    <exec executable="composer">
+      <arg line="install --no-suggest --no-progress --prefer-source --no-interaction --no-plugins"/>
+    </exec>
+  </target>
+  <target name="dev-database" depends="db-drop,db-user,db-extensions,db-schema" />
+  <target name="db-drop">
+    <exec executable="psql">
+      <arg line="-U postgres -h ${DB_URL} -f ./scripts/db/sql/0_drop.sql postgres"/>
+    </exec>
+  </target>
+  <target name="db-user">
+    <exec executable="psql">
+      <arg line="-U postgres -h ${DB_URL} -v userpassword=thisisnotasecurepassword -f ./scripts/db/sql/1_user.sql postgres"/>
+    </exec>
+  </target>
+  <target name="db-extensions">
+    <exec executable="psql">
+      <arg line="-U postgres -h ${DB_URL} -f ./scripts/db/sql/2_schema.sql postgres"/>
+    </exec>
+  </target>
+  <target name="db-schema">
+    <exec executable="vendor/bin/phinx">
+      <arg value="migrate"/>
+    </exec>
+  </target>
+  <target name="dummy-data">
+    <exec executable="vendor/bin/phinx">
+       <arg value="seed:run"/>
+    </exec>
+  </target>
+</project>
