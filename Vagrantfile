@@ -120,17 +120,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   SHELL
 
-  #Update Apache config and restart
-  config.vm.provision "shell", name: "configure apache", inline: <<-'SHELL'
-    # No Document root/public - uses php -S
-    sed -i -e "s/AllowOverride None/AllowOverride All/" /etc/apache2/apache2.conf
-
-    a2enmod rewrite
-    apachectl restart
-    # Make sure Apache also runs after vagrant reload
-    systemctl enable apache2
-  SHELL
-
   # Update Apache config and restart
   config.vm.provision "shell", name: "configure apache", inline: <<-'SHELL'
 
